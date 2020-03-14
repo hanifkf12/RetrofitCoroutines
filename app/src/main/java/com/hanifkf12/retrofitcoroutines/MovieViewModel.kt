@@ -13,10 +13,10 @@ import kotlin.coroutines.CoroutineContext
 class MovieViewModel : ViewModel(){
     private val repository = MovieRepository()
 
-//    private val parentJob = Job()
-//    private val coroutineContext: CoroutineContext
-//        get() = parentJob + Dispatchers.Main
-//    private val scope = CoroutineScope(coroutineContext)
+    private val parentJob = Job()
+    private val coroutineContext: CoroutineContext
+        get() = parentJob + Dispatchers.Main
+    private val scope = CoroutineScope(coroutineContext)
 
     val data : MutableLiveData<List<Movie>> = MutableLiveData()
     val loading : MutableLiveData<Boolean> = MutableLiveData()
@@ -24,7 +24,7 @@ class MovieViewModel : ViewModel(){
     fun fetchMovies(){
         loading.value = true
         Log.d("Fecth","LOAD MOVIE")
-        viewModelScope.launch {
+        scope.launch {
            repository.getMovie({
                data.value = it.results
                loading.value = false
@@ -35,6 +35,4 @@ class MovieViewModel : ViewModel(){
         }
     }
 
-
-    fun cancelAllRequests() = viewModelScope.cancel()
 }
