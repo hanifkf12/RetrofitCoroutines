@@ -9,6 +9,6 @@ import retrofit2.http.Query
 interface ApiInterface {
 
     @GET("movie/popular")
-    fun getMovie(@Query("api_key") apiKey : String) : Deferred<Response<MovieResponse>>
+    fun getMovieAsync(@Query("api_key") apiKey : String) : Deferred<Response<MovieResponse>>
 
 }
