@@ -36,17 +36,21 @@ class MainActivity : AppCompatActivity() {
         rv_movie.adapter = adapter
         viewModel = ViewModelProvider(this).get(MovieViewModel::class.java)
         viewModel.fetchMovies()
-
         viewModel.loading.observe(this, Observer {
             progressBar.visibility = if(it) View.VISIBLE else View.GONE
         })
 
         viewModel.data.observe(this, Observer {
             it?.let {
+                listMovie.clear()
                 listMovie.addAll(it)
                 adapter.notifyDataSetChanged()
             }
         })
+        floatingActionButton.setOnClickListener {
+            viewModel.fetchMovies()
+
+        }
 
     }
 

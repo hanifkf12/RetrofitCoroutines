@@ -19,7 +19,5 @@ class MovieRepository {
         }else{
             onError(response.message())
         }
-
-
     }
 }
