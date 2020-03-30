@@ -3,10 +3,13 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.hanifkf12.moviecatalogsubmission3.model.movie.Movie
+import com.hanifkf12.retrofitcoroutines.ItemMovieViewModel
 import com.hanifkf12.retrofitcoroutines.R
+import com.hanifkf12.retrofitcoroutines.databinding.ItemMovieBinding
 import kotlinx.android.synthetic.main.item_movie.view.*
 
 class MovieAdapter (private val context: Context?, private val list: List<Movie>, private val listener : (Movie)->Unit) : RecyclerView.Adapter<MovieAdapter.ViewHolder>() {
@@ -14,8 +17,8 @@ class MovieAdapter (private val context: Context?, private val list: List<Movie>
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(context).inflate(R.layout.item_movie,parent, false)
-        return ViewHolder(view)
+        val binding : ItemMovieBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.item_movie,parent,false)
+        return ViewHolder(binding)
     }
 
     override fun getItemCount(): Int {
@@ -26,15 +29,11 @@ class MovieAdapter (private val context: Context?, private val list: List<Movie>
         holder.bindView(list[position], listener)
     }
 
-    class ViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
+    class ViewHolder(private val binding: ItemMovieBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bindView(movie: Movie, listener: (Movie) -> Unit){
-            itemView.text_title.text = movie.title
-            itemView.iv_poster.contentDescription = movie.title
-            itemView.text_detail_year.text = movie.releaseDate
-            movie.posterPath.let {
-                Glide.with(itemView).load("https://image.tmdb.org/t/p/w500$it").into(itemView.iv_poster)
-            }
-            itemView.setOnClickListener {
+            val itemMovieViewModel = ItemMovieViewModel(movie)
+            binding.itemMovie = itemMovieViewModel
+            binding.ivPoster.setOnClickListener {
                 listener(movie)
             }
         }

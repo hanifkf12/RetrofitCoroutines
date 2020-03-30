@@ -10,29 +10,31 @@ import com.hanifkf12.retrofitcoroutines.repository.MovieRepository
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
-class MovieViewModel : ViewModel(){
+class MovieViewModel : ViewModel() {
     private val repository = MovieRepository()
 
-    private val parentJob = Job()
-    private val coroutineContext: CoroutineContext
-        get() = parentJob + Dispatchers.Main
-    private val scope = CoroutineScope(coroutineContext)
+//    private val parentJob = Job()
+//    private val coroutineContext: CoroutineContext
+//        get() = parentJob + Dispatchers.Main
+//    private val scope = CoroutineScope(coroutineContext)
 
-    val data : MutableLiveData<List<Movie>> = MutableLiveData()
-    val loading : MutableLiveData<Boolean> = MutableLiveData()
+    val data: MutableLiveData<List<Movie>> = MutableLiveData()
+    val loading: MutableLiveData<Boolean> = MutableLiveData()
 
-    fun fetchMovies(){
+    fun fetchMovies() = viewModelScope.launch {
         loading.value = true
-        Log.d("Fecth","LOAD MOVIE")
-        scope.launch {
-           repository.getMovie({
-               data.value = it.results
-               loading.value = false
-           },{
-               loading.value = false
-               Log.d("ERR", it)
-           })
-        }
+        Log.d("Fecth", "LOAD MOVIE")
+        repository.getMovie({
+            data.value = it.results
+            loading.value = false
+        }, {
+            loading.value = false
+            Log.d("ERR", it)
+        })
     }
 
+    override fun onCleared() {
+        super.onCleared()
+        viewModelScope.cancel()
+    }
 }
